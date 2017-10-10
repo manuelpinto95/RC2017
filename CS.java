@@ -1,83 +1,47 @@
-// TCPServer.java
-// A server program implementing TCP socket
-import java.net.*; 
-import java.io.*; 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.net.InetAddress;
+import java.net.ServerSocket;
+import java.net.Socket;
+public class CS {
+  public static void main(String[] args) throws Exception {
+    ServerSocket serverSocket = new ServerSocket(58011, 50,
+        InetAddress.getByName("localhost"));
+    System.out.println("Server started  at:  " + serverSocket);
 
-public class TCPServer { 
-  public static void main (String args[]) 
-  { 
-	try{ 
-			int serverPort = 6880; 
-			ServerSocket listenSocket = new ServerSocket(serverPort); 
-	  
-			System.out.println("server start listening... ... ...");
-		
-			while(true) { 
-				Socket clientSocket = listenSocket.accept(); 
-				Connection c = new Connection(clientSocket); 
-			} 
-	} 
-	catch(IOException e) {
-		System.out.println("Listen :"+e.getMessage());} 
+    while (true) {
+      System.out.println("Waiting for a  connection...");
+
+      final Socket activeSocket = serverSocket.accept();
+
+      System.out.println("Received a  connection from  " + activeSocket);
+      Runnable runnable = () -> handleClientRequest(activeSocket);
+      new Thread(runnable).start(); // start a new thread
+    }
   }
-}
 
-class Connection extends Thread { 
-	DataInputStream input; 
-	DataOutputStream output; 
-	Socket clientSocket; 
-	
-	public Connection (Socket aClientSocket) { 
-		try { 
-					clientSocket = aClientSocket; 
-					input = new DataInputStream( clientSocket.getInputStream()); 
-					output =new DataOutputStream( clientSocket.getOutputStream()); 
-					this.start(); 
-		} 
-			catch(IOException e) {
-			System.out.println("Connection:"+e.getMessage());
-			} 
-	  } 
+  public static void handleClientRequest(Socket socket) {
+    try{
+      BufferedReader socketReader = null;
+      BufferedWriter socketWriter = null;
+      socketReader = new BufferedReader(new InputStreamReader(
+          socket.getInputStream()));
+      socketWriter = new BufferedWriter(new OutputStreamWriter(
+          socket.getOutputStream()));
+      String inputMsg = null;
+      while ((inputMsg = socketReader.readLine()) != null) {
+        System.out.println("Received from  client: " + inputMsg);
+        String outputMsg = inputMsg;
+        socketWriter.write(outputMsg);
+        socketWriter.write("\n");
+        socketWriter.flush();
+      }
+      socket.close();
+    }catch(Exception e){
+      e.printStackTrace();
+    }
 
-	  public void run() { 
-		try { // an echo server 
-		  //  String data = input.readUTF();
-				
-			  FileWriter out = new FileWriter("test.txt");
-			  BufferedWriter bufWriter = new BufferedWriter(out);
-		   
-			  //Step 1 read length
-			  int nb = input.readInt();
-			  System.out.println("Read Length"+ nb);
-			  byte[] digit = new byte[nb];
-			  //Step 2 read byte
-			   System.out.println("Writing.......");
-			  for(int i = 0; i < nb; i++)
-				digit[i] = input.readByte();
-			  
-			   String st = new String(digit);
-			  bufWriter.append(st);
-			   bufWriter.close();
-				System.out.println ("receive from : " + 
-				clientSocket.getInetAddress() + ":" +
-				clientSocket.getPort() + " message - " + st);
-			  
-			  //Step 1 send length
-			  output.writeInt(st.length());
-			  //Step 2 send length
-			  output.writeBytes(st); // UTF is a string encoding
-		  //  output.writeUTF(data); 
-			} 
-			catch(EOFException e) {
-			System.out.println("EOF:"+e.getMessage()); } 
-			catch(IOException e) {
-			System.out.println("IO:"+e.getMessage());}  
-   
-			finally { 
-			  try { 
-				  clientSocket.close();
-			  }
-			  catch (IOException e){/*close failed*/}
-			}
-		}
+  }
 }
