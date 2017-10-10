@@ -1,4 +1,3 @@
-package rc;
 import java.net.*; 
 import java.io.*; 
 import java.lang.*;
@@ -8,13 +7,19 @@ public class User {
 	{
 		int serverPort = 58011;
 		String ip = "tejo.ist.utl.pt";
-		String firstArgument = args[0];
-		String secondArgument = args[2];
-		if (firstArgument.equals("-n")) {
-			ip = args[1];
-		}
-		if (firstArgument.equals("-p")) {
-			serverPort = Integer.parseInt(args[3]);
+		String firstArgument = "";
+		String secondArgument = "";
+		if (args.length> 0) {
+			if (args[0] != null) { ip = args[1]; System.out.println(args[0]);System.out.println(ip);}
+			if (args[2] != null) { serverPort = Integer.parseInt(args[3]); System.out.println(serverPort);}
+			if (firstArgument.equals("-n")) {
+				ip = args[1];
+				System.out.println(ip);
+			}
+			if (firstArgument.equals("-p")) {
+				serverPort = Integer.parseInt(args[3]);
+				System.out.println(serverPort);
+			}
 		}
 		while (true) {
 			Socket s = null; 
