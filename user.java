@@ -10,18 +10,28 @@ public class User {
 	{
 		int serverPort = 58011;
 		String ip = "tejo.ist.utl.pt";
-		String firstArgument = "";
-		String secondArgument = "";
+		/*String firstArgument = "";
+		String secondArgument = "";*/
 		String [] dataSplit = null;
 		String fileName = null;
 		if (args.length> 0) {
-			if (args[0] != null) { ip = args[1]; System.out.println(args[0]);System.out.println(ip);}
-			if (args[2] != null) { serverPort = Integer.parseInt(args[3]); System.out.println(serverPort);}
-			if (firstArgument.equals("-n")) {
+			/*if (args[0] != null) {
+				ip = args[1];
+				System.out.println(args[0]);
+				System.out.println(ip);
+			}
+
+			if (args[2] != null) {
+			 	serverPort = Integer.parseInt(args[3]);
+			  	System.out.println(serverPort);
+		  	}*/
+
+			if (args[0].equals("-n")) {
 				ip = args[1];
 				System.out.println(ip);
 			}
-			if (firstArgument.equals("-p")) {
+
+			if (args[2].equals("-p")) {
 				serverPort = Integer.parseInt(args[3]);
 				System.out.println(serverPort);
 			}
@@ -71,7 +81,9 @@ public class User {
 				System.out.println("IO:"+e.getMessage());} 
 			finally {
 			  	if(s!=null) 
-				  	try {s.close();
+				  	try {
+				  		s.shutdownOutput();
+				  		s.close();
 				  	} 
 				  	catch (IOException e) {/*close failed*/}
 				}

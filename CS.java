@@ -38,6 +38,7 @@ public class CS {
         socketWriter.write("\n");
         socketWriter.flush();
       }
+      socket.shutdownOutput();
       socket.close();
     }catch(Exception e){
       e.printStackTrace();
