@@ -1,6 +1,9 @@
 import java.net.*; 
 import java.io.*; 
 import java.lang.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.charset.Charset;
 
 public class User { 
 	public static void main (String args[]) 
@@ -9,6 +12,8 @@ public class User {
 		String ip = "tejo.ist.utl.pt";
 		String firstArgument = "";
 		String secondArgument = "";
+		String [] dataSplit = null;
+		String fileName = null;
 		if (args.length> 0) {
 			if (args[0] != null) { ip = args[1]; System.out.println(args[0]);System.out.println(ip);}
 			if (args[2] != null) { serverPort = Integer.parseInt(args[3]); System.out.println(serverPort);}
@@ -22,23 +27,28 @@ public class User {
 			}
 		}
 		while (true) {
+			//String fileContent = readFile("file.txt", Charset.defaultCharset());
 			Socket s = null; 
 			Console console = System.console();
 			String data = console.readLine() + "\n";
-			//data.concat("\n");
-			if (data.equals("exit\n")) {
-				break;
-			}
-			else if (data.equals("list\n")) {
-				data = "LST\n";
-			}
-			if (data.contains("request")) {
-				String [] dataSplit = data.split(" ");
-				dataSplit[0] = "REQ";
-				
-			}
 			try{ 
-				//String data = "LST\n"; 
+				if (data.equals("exit\n")) {
+					break;
+				}
+				//processes the list keyword
+				else if (data.equals("list\n")) {
+					data = "LST\n";
+				}
+				//processes the request keyword and its attributes
+				if (data.contains("request ")) {
+					dataSplit = data.split(" ");
+					dataSplit[0] = "REQ";
+					fileName = dataSplit[2].replace("\n","");
+					System.out.println(fileName);
+					String fileContent = readFile(fileName, Charset.defaultCharset());
+					System.out.println(fileContent);
+					data = dataSplit[0] + " " + dataSplit[1] + " " + fileContent.length() + " " + fileContent;
+				}
 		  		s = new Socket(ip, serverPort); 
 		  		DataOutputStream output = new DataOutputStream(s.getOutputStream());
 		  		byte[] arrayOutput = data.getBytes();
@@ -66,5 +76,9 @@ public class User {
 				  	catch (IOException e) {/*close failed*/}
 				}
   		  }
+	  }
+	  public static String readFile(String path, Charset encoding) throws IOException {
+			byte[] encoded = Files.readAllBytes(Paths.get(path));
+	    	return new String(encoded, encoding);
 	  }
   }
