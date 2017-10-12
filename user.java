@@ -5,6 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.charset.Charset;
 
+
 public class User { 
 	public static void main (String args[]) 
 	{
@@ -28,12 +29,12 @@ public class User {
 
 			if (args[0].equals("-n")) {
 				ip = args[1];
-				System.out.println(ip);
+				//System.out.println(ip);
 			}
 
 			if (args[2].equals("-p")) {
 				serverPort = Integer.parseInt(args[3]);
-				System.out.println(serverPort);
+				//System.out.println(serverPort);
 			}
 		}
 		while (true) {
@@ -54,9 +55,9 @@ public class User {
 					dataSplit = data.split(" ");
 					dataSplit[0] = "REQ";
 					fileName = dataSplit[2].replace("\n","");
-					System.out.println(fileName);
+					//System.out.println(fileName);
 					String fileContent = readFile(fileName, Charset.defaultCharset());
-					System.out.println(fileContent);
+					//System.out.println(fileContent);
 					data = dataSplit[0] + " " + dataSplit[1] + " " + fileContent.length() + " " + fileContent;
 				}
 		  		s = new Socket(ip, serverPort); 
